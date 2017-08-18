@@ -6,7 +6,7 @@
   yarn
 ```
 
-# For testing on your browser
+# Testing on your browser/Development
 
 ```bash
   yarn dev
