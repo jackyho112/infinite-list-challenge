@@ -6,7 +6,6 @@
   yarn
 ```
 
-
 # For testing on your browser
 
 ```bash
