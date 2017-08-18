@@ -3,9 +3,9 @@ import axios from 'axios';
 import { sortBy } from 'lodash';
 import InfiniteScroll from 'react-infinite-scroller';
 import styled from 'styled-components';
-import ListItem from './ListItem';
-import SortingBar from './SortingBar';
-import sortOptions from './sortOptions';
+import ListItem from '../components/ListItem';
+import SortingBar from '../components/SortingBar';
+import sortOptions from '../constants/sortOptions';
 
 function sortItems(items, sortOption, reversed = false) {
   let sortedItems = sortBy(items, [item => item[sortOption.value]]);
@@ -73,7 +73,7 @@ class InfiniteListContainer extends Component {
             key={item.id}
             setSimilarItem={() => this.setState({ similarToItem: item })}
             setSimilarButtonText={
-              "Only display results similar to this item's square footage"
+              "Only display results with square footage similar to this item's"
             }
           />
         ))}
@@ -92,7 +92,7 @@ class InfiniteListContainer extends Component {
       return (
         <div>
           <br />
-          {`Displaying results similar to ${similarToItem.name}'s square footage`}
+          {`Displaying results with square footage similar to ${similarToItem.name}'s`}
           <Button onClick={() => this.setState({ similarToItem: null })}>
             Display all
           </Button>

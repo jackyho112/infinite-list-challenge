@@ -7,7 +7,7 @@ const config = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:8080',
     'webpack/hot/only-dev-server',
-    './js/ClientApp.jsx'
+    './js/Root.jsx'
   ],
   devtool: 'cheap-eval-source-map',
   output: {
@@ -43,7 +43,7 @@ const config = {
 console.log(process.env.NODE_ENV);
 
 if (process.env.NODE_ENV === 'production') {
-  config.entry = './js/ClientApp.jsx';
+  config.entry = './js/Root.jsx';
   config.devtool = false;
   config.plugins = [];
 }

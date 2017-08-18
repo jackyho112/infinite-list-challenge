@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import sortOptions from './sortOptions';
+import sortOptions from '../constants/sortOptions';
 
 function SortingBar({ selectedSortOption, selectSortOption, reverseOrder }) {
   return (
