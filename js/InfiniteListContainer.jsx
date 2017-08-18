@@ -73,7 +73,7 @@ class InfiniteListContainer extends Component {
             key={item.id}
             setSimilarItem={() => this.setState({ similarToItem: item })}
             setSimilarButtonText={
-              "Only display results similar to this item' square footage"
+              "Only display results similar to this item's square footage"
             }
           />
         ))}
@@ -92,7 +92,7 @@ class InfiniteListContainer extends Component {
       return (
         <div>
           <br />
-          {`Displaying results similar to ${similarToItem.name}`}
+          {`Displaying results similar to ${similarToItem.name}'s square footage`}
           <Button onClick={() => this.setState({ similarToItem: null })}>
             Display all
           </Button>
