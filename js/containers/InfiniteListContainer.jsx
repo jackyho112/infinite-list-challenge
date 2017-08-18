@@ -103,10 +103,19 @@ class InfiniteListContainer extends Component {
     return null;
   };
 
+  renderLoader = () => {
+    const Loader = styled.h3`
+      margin-top: 10px;
+    `;
+
+    return <Loader>Loading ...</Loader>
+  }
+
   render() {
     const {
       loadMoreRows,
       renderList,
+      renderLoader,
       state: {
         remoteRowCount,
         list,
@@ -139,7 +148,7 @@ class InfiniteListContainer extends Component {
           pageStart={1}
           loadMore={loadMoreRows}
           hasMore={remoteRowCount > list.length}
-          loader={<div className="loader">Loading ...</div>}
+          loader={renderLoader()}
         >
           {renderList()}
         </InfiniteScroll>
