@@ -108,14 +108,15 @@ class InfiniteListContainer extends Component {
       margin-top: 10px;
     `;
 
-    return <Loader>Loading ...</Loader>
-  }
+    return <Loader>Loading ...</Loader>;
+  };
 
   render() {
     const {
       loadMoreRows,
       renderList,
       renderLoader,
+      renderSimilarItemInfo,
       state: {
         remoteRowCount,
         list,
@@ -142,7 +143,7 @@ class InfiniteListContainer extends Component {
           }}
         />
 
-        {this.renderSimilarItemInfo()}
+        {renderSimilarItemInfo()}
 
         <InfiniteScroll
           pageStart={1}
