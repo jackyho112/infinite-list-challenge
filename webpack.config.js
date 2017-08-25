@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const config = {
   context: __dirname,
@@ -28,13 +29,23 @@ const config = {
     reasons: true,
     chunks: true
   },
-  plugins: [new webpack.HotModuleReplacementPlugin(), new webpack.NamedModulesPlugin()],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
+    new ExtractTextPlugin('styles.css')
+  ],
   module: {
     rules: [
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         include: [path.resolve('js')]
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader', use: 'css-loader'
+        })
       }
     ]
   }

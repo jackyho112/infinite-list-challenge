@@ -3,9 +3,15 @@ import axios from 'axios';
 import { sortBy } from 'lodash';
 import InfiniteScroll from 'react-infinite-scroller';
 import styled from 'styled-components';
-import ListItem from '../components/ListItem';
+import ItemList from '../components/ItemList';
+import SimilarItemInfo from '../components/SimilarItemInfo';
 import SortingBar from '../components/SortingBar';
 import sortOptions from '../constants/sortOptions';
+import './InfiniteListContainer.css';
+
+const Loader = styled.h3`
+  margin-top: 10px;
+`;
 
 function sortItems(items, sortOption, reversed = false) {
   let sortedItems = sortBy(items, [item => item[sortOption.value]]);
@@ -31,12 +37,13 @@ class InfiniteListContainer extends Component {
   }
 
   loadMoreRows = () => {
-    const { list, currentPage, selectedSortOption, orderReversed } = this.state;
-    const nextPage = currentPage + 1;
+    const nextPage = this.state.currentPage + 1;
 
     return axios
       .get(`https://thisopenspace.com/lhl-test?page=${nextPage}`)
       .then(response => {
+        const { list, selectedSortOption, orderReversed } = this.state;
+
         this.setState({
           list: [
             ...list,
@@ -51,64 +58,19 @@ class InfiniteListContainer extends Component {
       });
   };
 
-  renderList = () => {
-    const { similarToItem } = this.state;
-    let items = this.state.list;
-
-    if (similarToItem) {
-      const similarItemSquareFootage = similarToItem.square_footage;
-      // Arbitrary range for now
-      items = items.filter(
-        item =>
-          item.square_footage > similarItemSquareFootage - 300 &&
-          item.square_footage < similarItemSquareFootage + 300
-      );
-    }
-
-    return (
-      <div>
-        {items.map(item => (
-          <ListItem
-            item={item}
-            key={item.id}
-            setSimilarItem={() => this.setState({ similarToItem: item })}
-            setSimilarButtonText={
-              "Only display results with square footage similar to this item's"
-            }
-          />
-        ))}
-      </div>
-    );
-  };
-
   renderSimilarItemInfo = () => {
     const { similarToItem } = this.state;
 
-    const Button = styled.button`
-      margin-left: 10px;
-    `;
-
     if (similarToItem) {
       return (
-        <div>
-          <br />
-          {`Displaying results with square footage similar to ${similarToItem.name}'s`}
-          <Button onClick={() => this.setState({ similarToItem: null })}>
-            Display all
-          </Button>
-        </div>
-      );
+        <SimilarItemInfo
+          similarToItem={similarToItem}
+          resetSimilarItem={() => this.setState({ similarToItem: null })}
+        />
+      )
     }
 
     return null;
-  };
-
-  renderLoader = () => {
-    const Loader = styled.h3`
-      margin-top: 10px;
-    `;
-
-    return <Loader>Loading ...</Loader>;
   };
 
   render() {
@@ -121,7 +83,8 @@ class InfiniteListContainer extends Component {
         remoteRowCount,
         list,
         selectedSortOption: currentSortOption,
-        orderReversed
+        orderReversed,
+        similarToItem
       }
     } = this;
 
@@ -149,9 +112,13 @@ class InfiniteListContainer extends Component {
           pageStart={1}
           loadMore={loadMoreRows}
           hasMore={remoteRowCount > list.length}
-          loader={renderLoader()}
+          loader={<Loader>Loading ...</Loader>}
         >
-          {renderList()}
+          <ItemList
+            similarToItem={similarToItem}
+            list={list}
+            setSimilarItem={item => this.setState({ similarToItem: item })}
+          />
         </InfiniteScroll>
       </div>
     );

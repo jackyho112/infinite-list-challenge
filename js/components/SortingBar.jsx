@@ -1,6 +1,11 @@
 import React from 'react';
 import Select from 'react-select';
+import styled from 'styled-components';
 import sortOptions from '../constants/sortOptions';
+
+const Button = styled.button`
+  margin-top: 5px;
+`;
 
 function SortingBar({ selectedSortOption, selectSortOption, reverseOrder }) {
   return (
@@ -11,9 +16,9 @@ function SortingBar({ selectedSortOption, selectSortOption, reverseOrder }) {
         options={sortOptions}
         onChange={selectSortOption}
       />
-      <button onClick={reverseOrder}>
+      <Button onClick={reverseOrder}>
         Reverse order
-      </button>
+      </Button>
     </div>
   );
 }
