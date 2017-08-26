@@ -9,8 +9,8 @@ function ItemList({ similarToItem, list, setSimilarItem }) {
     // Arbitrary range for now
     items = items.filter(
       item =>
-      item.square_footage > similarItemSquareFootage - 300 &&
-      item.square_footage < similarItemSquareFootage + 300
+        item.square_footage > similarItemSquareFootage - 300 &&
+        item.square_footage < similarItemSquareFootage + 300
     );
   }
 

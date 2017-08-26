@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { sortBy } from 'lodash';
+import { sortBy, chunk, flatten } from 'lodash';
 import InfiniteScroll from 'react-infinite-scroller';
 import styled from 'styled-components';
 import ItemList from '../components/ItemList';
@@ -12,6 +12,8 @@ import './InfiniteListContainer.css';
 const Loader = styled.h3`
   margin-top: 10px;
 `;
+
+const batchSize = 10;
 
 function sortItems(items, sortOption, reversed = false) {
   let sortedItems = sortBy(items, [item => item[sortOption.value]]);
@@ -30,32 +32,46 @@ class InfiniteListContainer extends Component {
       list: [],
       remoteRowCount: 1,
       currentPage: 0,
+      pageLoaded: 0,
       selectedSortOption: sortOptions[0],
       orderReversed: false,
       similarToItem: null
     };
+
+    this.loadedItems = [];
   }
 
   loadMoreRows = () => {
-    const nextPage = this.state.currentPage + 1;
+    const { currentPage, pageLoaded } = this.state;
+    const nextPage = currentPage + 1;
 
-    return axios
-      .get(`https://thisopenspace.com/lhl-test?page=${nextPage}`)
-      .then(response => {
-        const { list, selectedSortOption, orderReversed } = this.state;
-
-        this.setState({
-          list: [
-            ...list,
-            ...sortItems(response.data.data, selectedSortOption, orderReversed)
-          ],
-          currentPage: nextPage,
-          remoteRowCount: response.data.total
+    if (nextPage > pageLoaded) {
+      return axios
+        .get(`https://thisopenspace.com/lhl-test?page=${nextPage}`)
+        .then(response => {
+          const { list, selectedSortOption, orderReversed } = this.state;
+          this.loadedItems = this.loadedItems.concat(response.data.data);
+          this.setState({
+            list: [
+              ...list,
+              ...sortItems(
+                response.data.data,
+                selectedSortOption,
+                orderReversed
+              )
+            ],
+            pageLoaded: pageLoaded + 1,
+            currentPage: nextPage,
+            remoteRowCount: response.data.total
+          });
         });
-      })
-      .catch(error => {
-        console.error('axios error', error); // eslint-disable-line no-console
+    } else {
+      const rowChunks = chunk(this.loadedItems, batchSize);
+      this.setState({
+        list: flatten(rowChunks.slice(0, nextPage)),
+        currentPage: nextPage
       });
+    }
   };
 
   renderSimilarItemInfo = () => {
@@ -67,7 +83,7 @@ class InfiniteListContainer extends Component {
           similarToItem={similarToItem}
           resetSimilarItem={() => this.setState({ similarToItem: null })}
         />
-      )
+      );
     }
 
     return null;
@@ -93,15 +109,29 @@ class InfiniteListContainer extends Component {
         <SortingBar
           selectedSortOption={currentSortOption}
           selectSortOption={selectedSortOption => {
+            this.loadedItems = sortItems(
+              this.loadedItems,
+              selectedSortOption,
+              orderReversed
+            );
+
             this.setState({
               selectedSortOption,
-              list: sortItems(list, selectedSortOption, orderReversed)
+              currentPage: 1,
+              list: this.loadedItems.slice(0, 10)
             });
           }}
           reverseOrder={() => {
+            this.loadedItems = sortItems(
+              this.loadedItems,
+              currentSortOption,
+              !orderReversed
+            );
+
             this.setState({
               orderReversed: !orderReversed,
-              list: sortItems(list, currentSortOption, !orderReversed)
+              currentPage: 1,
+              list: this.loadedItems.slice(0, 10)
             });
           }}
         />
