@@ -60,7 +60,7 @@ class InfiniteListContainer extends Component {
                 orderReversed
               )
             ],
-            pageLoaded: pageLoaded + 1,
+            pageLoaded: this.state.pageLoaded + 1,
             currentPage: nextPage,
             remoteRowCount: response.data.total
           });
